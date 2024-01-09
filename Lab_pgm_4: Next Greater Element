@@ -1,0 +1,89 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+struct Stack {
+    int* arr;
+    int top;
+};
+
+// Initialize stack
+void initializeStack(struct Stack* st, int n) {
+    st->top = -1;
+    st->arr = (int*)malloc(sizeof(int) * n);
+}
+
+// Check if stack is empty
+int isEmpty(struct Stack* st) {
+    return st->top == -1;
+}
+
+// Push element onto stack
+void push(struct Stack* st, int element) {
+    st->top++;
+    st->arr[st->top] = element;
+}
+
+// Pop element from stack
+int pop(struct Stack* st) {
+    if (!isEmpty(st)) {
+        int value = st->arr[st->top];
+        st->top--;
+        return value;
+    }
+    return -1; // Return -1 to indicate an empty stack
+}
+
+// Calculate next greater elements
+void NextGreaterElement(int arr[], int n, int result[]) {
+    struct Stack st;
+    initializeStack(&st, n);
+
+    for (int i = n - 1; i >= 0; i--) {
+        int element = arr[i];
+        if (isEmpty(&st)) {
+            push(&st, element);
+            result[i] = -1;
+            continue;
+        }
+        if (element < st.arr[st.top]) {
+            result[i] = st.arr[st.top];
+            push(&st, element);
+            continue;
+        }
+        while (!isEmpty(&st) && st.arr[st.top] <= element) {
+            pop(&st);
+        }
+        if (isEmpty(&st)) {
+            result[i] = -1;
+        } else {
+            result[i] = st.arr[st.top];
+        }
+        push(&st, element);
+    }
+
+    free(st.arr);
+}
+int main() {
+    int n;
+    printf("Enter the value of n: ");
+    scanf("%d", &n);
+
+    int* arr = (int*)malloc(sizeof(int) * n);
+    printf("Enter the elements of the array:\n");
+    for (int i = 0; i < n; i++) {
+        scanf("%d", &arr[i]);
+    }
+
+    int* result = (int*)malloc(sizeof(int) * n);
+    NextGreaterElement(arr, n, result);
+
+    printf("Result:\n");
+    for (int i = 0; i < n; i++) {
+        printf("%d ", result[i]);
+    }
+
+    free(arr);
+    free(result);
+
+    return 0;
+}
