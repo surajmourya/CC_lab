@@ -1,0 +1,62 @@
+#include <stdio.h>
+#include <stdbool.h>
+#include <stdlib.h>
+
+// Structure for a binary tree node
+struct TreeNode {
+    int data;
+    struct TreeNode* left;
+    struct TreeNode* right;
+};
+
+// Function to create a new node
+struct TreeNode* createNode(int data) {
+    struct TreeNode* newNode = (struct TreeNode*)malloc(sizeof(struct TreeNode));
+    newNode->data = data;
+    newNode->left = NULL;
+    newNode->right = NULL;
+    return newNode;
+}
+
+// Function to check if two trees are mirrored
+bool areMirrored(struct TreeNode* root1, struct TreeNode* root2) {
+    // Base cases
+    if (root1 == NULL && root2 == NULL) {
+        return true; // Both trees are empty, so they are mirrored
+    }
+    if (root1 == NULL || root2 == NULL) {
+        return false; // One tree is empty, but the other is not, so they are not mirrored
+    }
+    // Check if the current nodes have the same data and if their subtrees are mirrored
+    return (root1->data == root2->data) &&
+           areMirrored(root1->left, root2->right) &&
+           areMirrored(root1->right, root2->left);
+}
+
+int main() {
+    // Create two example mirrored binary trees
+    struct TreeNode* tree1 = createNode(1);
+    tree1->left = createNode(2);
+    tree1->right = createNode(2);
+    tree1->left->left = createNode(3);
+    tree1->left->right = createNode(4);
+    tree1->right->left = createNode(4);
+    tree1->right->right = createNode(3);
+
+    struct TreeNode* tree2 = createNode(1);
+    tree2->left = createNode(2);
+    tree2->right = createNode(2);
+    tree2->left->left = createNode(3);
+    tree2->left->right = createNode(4);
+    tree2->right->left = createNode(4);
+    tree2->right->right = createNode(3);
+
+    // Check if the two trees are mirrored
+    if (areMirrored(tree1, tree2)) {
+        printf("The two binary trees are mirrored.\n");
+    } else {
+        printf("The two binary trees are not mirrored.\n");
+    }
+
+    return 0;
+}

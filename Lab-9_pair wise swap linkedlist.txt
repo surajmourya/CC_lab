@@ -1,0 +1,74 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+// Define the Node structure
+struct Node {
+    int val;
+    struct Node *next;
+};
+
+// Function to swap nodes in pairs
+struct Node* swapPairs(struct Node* head) {
+    // Create a dummy node to ease things
+    struct Node* dummy = (struct Node*)malloc(sizeof(struct Node));
+    dummy->val = 0;
+    dummy->next = head;
+
+    struct Node* point = dummy;
+
+    
+    while (point->next != NULL && point->next->next != NULL) {
+        // Identify nodes to swap
+        struct Node* swap1 = point->next;
+        struct Node* swap2 = point->next->next;
+
+        // Actually swap
+        swap1->next = swap2->next;
+        swap2->next = swap1;
+
+        // Prepare for next
+        point->next = swap2;
+        point = swap1;
+    }
+
+    // Return the start node
+    return dummy->next;
+}
+
+// Function to print the linked list
+void printList(struct Node* head) {
+    while (head != NULL) {
+        printf("%d -> ", head->val);
+        head = head->next;
+    }
+    printf("NULL\n");
+}
+
+// Function to create a new node with a given value
+struct Node* newNode(int val) {
+    struct Node* node = (struct Node*)malloc(sizeof(struct Node));
+    node->val = val;
+    node->next = NULL;
+    return node;
+}
+
+// Driver program
+int main() {
+    
+    struct Node* head = newNode(1);
+    head->next = newNode(2);
+    head->next->next = newNode(3);
+    head->next->next->next = newNode(4);
+    head->next->next->next->next = newNode(5);
+
+    printf("Original Linked List: ");
+    printList(head);
+
+    // Swap nodes in pairs
+    struct Node* result = swapPairs(head);
+
+    printf("Linked List after swapping pairs: ");
+    printList(result);
+
+    return 0;
+}
