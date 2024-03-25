@@ -1,0 +1,53 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+// Function to find two numbers that sum up to the target
+int* findTwoSum_BruteForce(int* nums, int numsSize, int target, int* returnSize) {
+    int* indices = (int*)malloc(2 * sizeof(int));
+    *returnSize = 0;
+
+    // Brute-force approach to find two numbers
+    for (int i = 0; i < numsSize; i++) {
+        for (int j = i + 1; j < numsSize; j++) {
+            if (nums[i] + nums[j] == target) {
+                indices[0] = i;
+                indices[1] = j;
+                *returnSize = 2;
+                return indices;
+            }
+        }
+    }
+
+    return indices; // Return an empty array if no solution is found
+}
+
+int main() {
+    int n;
+    printf("Enter the number of elements: ");
+    scanf("%d", &n);
+
+    int* nums = (int*)malloc(n * sizeof(int));
+
+    printf("Enter the elements: ");
+    for (int i = 0; i < n; i++) {
+        scanf("%d", &nums[i]);
+    }
+
+    int target;
+    printf("Enter the target sum: ");
+    scanf("%d", &target);
+
+    int returnSize;
+    int* indices = findTwoSum_BruteForce(nums, n, target, &returnSize);
+
+    if (returnSize == 2) {
+        printf("Indices of the two numbers that sum up to target: %d %d\n", indices[0], indices[1]);
+    } else {
+        printf("No solution found!\n");
+    }
+
+    free(nums);
+    free(indices);
+
+    return 0;
+}

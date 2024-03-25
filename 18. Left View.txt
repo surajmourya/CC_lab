@@ -1,0 +1,75 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+// Define the structure for a binary tree node
+struct Node {
+    int data;
+    struct Node *left;
+    struct Node *right;
+};
+
+// Function to create a new node with the given data
+struct Node* newNode(int data) {
+    struct Node* node = (struct Node*)malloc(sizeof(struct Node));
+    node->data = data;
+    node->left = NULL;
+    node->right = NULL;
+    return node;
+}
+
+// Function to perform the left side view of the binary tree
+//void recursion(struct Node *root, int level, int *res, int *size);
+
+int* leftSideView(struct Node *root, int* returnSize) {
+    // Allocate memory for the result array
+    int *res = (int*)malloc(sizeof(int) * 1000); // Assuming maximum size of the result
+    *returnSize = 0;
+
+    // Perform the recursion to get the left side view
+    recursion(root, 0, res, returnSize);
+
+    return res;
+}
+
+void recursion(struct Node *root, int level, int *res, int *size) {
+    // Base case: if the root is NULL, return
+    if (root == NULL) return;
+
+    // If the current level is equal to the size of the result array, add the current node's value to the result array
+    if (*size == level) {
+        res[(*size)++] = root->data;
+    }
+
+    // Recursively traverse the left subtree first, then the right subtree
+    recursion(root->left, level + 1, res, size);
+    recursion(root->right, level + 1, res, size);
+}
+
+int main() {
+    // Create a binary tree
+    struct Node* root = newNode(1);
+    root->left = newNode(2);
+    root->right = newNode(3);
+    root->left->left = newNode(4);
+    root->left->right = newNode(5);
+    root->right->left = newNode(6);
+    root->right->right = newNode(7);
+    root->left->right->left = newNode(8);
+    root->left->right->right = newNode(9);
+    root->right->right->left = newNode(10);
+
+    int size;
+    int* result = leftSideView(root, &size);
+
+    // Print the result of the left side view
+    printf("Left Side View of the Binary Tree: ");
+    for (int i = 0; i < size; i++) {
+        printf("%d ", result[i]);
+    }
+    printf("\n");
+
+    // Free the memory allocated for the result array
+    free(result);
+
+    return 0;
+}

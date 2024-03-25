@@ -1,0 +1,73 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+#define CAPACITY 10 // Size of the HashTable.
+
+// Defines the HashTable item.
+typedef struct {
+    int key;
+    int value;
+} Ht_item;
+
+// Defines the HashTable.
+typedef struct {
+    Ht_item* items[CAPACITY];
+    int count;
+} HashTable;
+
+// Hash function for integer keys
+int hash_function(int key) {
+    return key % CAPACITY;
+}
+
+// Creates a new HashTable item.
+Ht_item* create_item(int key, int value) {
+    Ht_item* item = (Ht_item*)malloc(sizeof(Ht_item));
+    item->key = key;
+    item->value = value;
+    return item;
+}
+
+// Initializes a new HashTable
+HashTable* create_table() {
+    HashTable* table = (HashTable*)malloc(sizeof(HashTable));
+    for (int i = 0; i < CAPACITY; i++) {
+        table->items[i] = NULL; // Initialize all items to NULL
+    }
+    return table;
+}
+
+// Prints the content of the HashTable
+void print_table(HashTable* table) {
+    printf("\nHash Table\n-------------------\n");
+
+    for (int i = 0; i < CAPACITY; i++) {
+        if (table->items[i]) {
+            printf("Index:%d, Key:%d, Value:%d\n", i, table->items[i]->key, table->items[i]->value);
+        }
+    }
+
+    printf("-------------------\n\n");
+}
+
+
+int main() {
+    
+    HashTable* table = create_table();
+
+    
+    Ht_item* item1 = create_item(123, 456);
+    table->items[hash_function(123)] = item1;
+    Ht_item* item2 = create_item(456, 789);
+    table->items[hash_function(456)] = item2;
+
+    // Print the table
+    print_table(table);
+
+    // Free memory
+    free(item1);
+    free(item2);
+    free(table);
+
+    return 0;
+}
