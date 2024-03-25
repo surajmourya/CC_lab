@@ -1,0 +1,126 @@
+// Online C compiler to run C program online
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <ctype.h>
+
+#define MAX_SIZE 100
+
+typedef struct {
+    char data[MAX_SIZE];
+    int top;
+} Stack;
+
+typedef struct {
+    char data[MAX_SIZE];
+    int front, rear;
+} Queue;
+
+void initializeStack(Stack *s) {
+    s->top = -1;
+}
+
+void push(Stack *s, char item) {
+    s->data[++s->top] = item;
+}
+
+char pop(Stack *s) {
+    return s->data[s->top--];
+}
+
+char peek(Stack *s) {
+    return s->data[s->top];
+}
+
+void initializeQueue(Queue *q) {
+    q->front = q->rear = -1;
+}
+
+void enqueue(Queue *q, char item) {
+    if (q->rear == MAX_SIZE - 1) {
+        printf("Queue is full.\n");
+        exit(EXIT_FAILURE);
+    }
+
+    if (q->front == -1) {
+        q->front = 0;
+    }
+
+    q->data[++q->rear] = item;
+}
+
+char dequeue(Queue *q) {
+    if (q->front == -1) {
+        printf("Queue is empty.\n");
+        exit(EXIT_FAILURE);
+    }
+
+    char item = q->data[q->front];
+
+    if (q->front == q->rear) {
+        q->front = q->rear = -1;
+    } else {
+        q->front++;
+    }
+
+    return item;
+}
+
+int getPrecedence(char op) {
+    if (op == '+' || op == '-') {
+        return 1;
+    } else if (op == '*' || op == '/') {
+        return 2;
+    }
+    return 0;
+}
+
+void infixToPostfix(char infix[], Queue *output) {
+    Stack operators;
+    initializeStack(&operators);
+
+    int length = strlen(infix);
+
+    for (int i = 0; i < length; i++) {
+        char token = infix[i];
+
+        if (isdigit(token)) {
+            enqueue(output, token);
+        } else if (token == '(') {
+            push(&operators, token);
+        } else if (token == ')') {
+            while (peek(&operators) != '(') {
+                enqueue(output, pop(&operators));
+            }
+            pop(&operators); // Discard '('
+        } else if (token == '+' || token == '-' || token == '*' || token == '/') {
+            while (operators.top != -1 && getPrecedence(peek(&operators)) >= getPrecedence(token)) {
+                enqueue(output, pop(&operators));
+            }
+            push(&operators, token);
+        }
+    }
+
+    while (operators.top != -1) {
+        enqueue(output, pop(&operators));
+    }
+}
+
+int main() {
+    char infix[MAX_SIZE];
+    Queue output;
+    initializeQueue(&output);
+
+    printf("Enter infix expression: ");
+    scanf("%[^\n]", infix);
+
+    infixToPostfix(infix, &output);
+
+    printf("Postfix expression: ");
+    while (output.front != -1) {
+        printf("%c", dequeue(&output));
+    }
+    printf("\n");
+
+    return 0;
+}
