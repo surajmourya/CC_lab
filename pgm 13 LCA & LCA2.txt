@@ -1,0 +1,97 @@
+#include<stdio.h>
+#include<stdlib.h>
+
+struct Node {
+    int data;
+    struct Node* left;
+    struct Node* right;
+};
+
+struct Node* createNode(int val) {
+    struct Node* newNode = (struct Node*)malloc(sizeof(struct Node));
+    newNode->data = val;
+    newNode->left = NULL;
+    newNode->right = NULL;
+    return newNode;
+}
+
+int getPath(struct Node* root, int key, int path[], int *pathLength) {
+    if (root == NULL) {
+        return 0;
+    }
+
+    path[(*pathLength)++] = root->data;
+
+    if (root->data == key) {
+        return 1;
+    }
+
+    if (getPath(root->left, key, path, pathLength) || getPath(root->right, key, path, pathLength)) {
+        return 1;
+    }
+
+    (*pathLength)--;
+    return 0;
+}
+
+int LCA(struct Node* root, int n1, int n2) {
+    int path1[100], path2[100];
+    int path1_length = 0, path2_length = 0;
+
+    if (!getPath(root, n1, path1, &path1_length) || !getPath(root, n2, path2, &path2_length)) {
+        return -1;
+    }
+
+    int pc;
+    for (pc = 0; pc < path1_length && pc < path2_length; pc++) {
+        if (path1[pc] != path2[pc]) {
+            break;
+        }
+    }
+
+    return path1[pc - 1];
+}
+
+struct Node* LCA2(struct Node* root, int n2, int n1) {
+    if (root == NULL) {
+        return NULL;
+    }
+    if (root->data == n1 || root->data == n2) {
+        return root;
+    }
+
+    struct Node* leftLCA = LCA2(root->left, n2, n1);
+    struct Node* rightLCA = LCA2(root->right, n2, n1);
+
+    if (leftLCA != NULL && rightLCA != NULL) {
+        return root;
+    }
+    else if (leftLCA != NULL && rightLCA == NULL) {
+        return leftLCA;
+    }
+    else if (leftLCA == NULL && rightLCA != NULL) {
+        return rightLCA;}
+    else
+    return NULL;
+}
+
+
+
+int main() {
+    struct Node* root = createNode(1);
+    root->left = createNode(2);
+    root->right = createNode(3);
+    root->left->left = createNode(4);
+    root->right->left = createNode(5);
+    root->right->right = createNode(6);
+    root->right->left->left = createNode(7);
+
+    struct Node* lca = LCA2(root, 7, 6);
+    printf("with LCA2: \n");
+    printf("%d\n", lca->data);
+
+    printf("with LCA: \n");
+    printf("%d\n", LCA(root, 7, 6));
+
+    return 0;
+}

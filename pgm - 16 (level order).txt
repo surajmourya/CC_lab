@@ -1,0 +1,57 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+// Structure for a binary tree node
+struct Node {
+    int data;
+    struct Node* left;
+    struct Node* right;
+};
+
+// Function to create a new binary tree node
+struct Node* newNode(int data) {
+    struct Node* node = (struct Node*)malloc(sizeof(struct Node));
+    node->data = data;
+    node->left = NULL;
+    node->right = NULL;
+    return node;
+}
+
+void levelOrder(struct Node* root) {
+    if (root == NULL)
+        return;
+
+    // Create a queue for level order traversal
+    struct Node* queue[1000];  // Array of pointers to struct Node
+    int front = -1, rear = -1;
+    queue[rear++] = root;
+
+    while (front < rear) {
+        struct Node* tempNode = queue[front++];
+        printf("%d ", tempNode->data);
+
+        // Enqueue left child
+        if (tempNode->left != NULL)
+            queue[rear++] = tempNode->left;
+
+        // Enqueue right child
+        if (tempNode->right != NULL)
+            queue[rear++] = tempNode->right;
+    }
+}
+
+
+// Driver program to test above functions
+int main() {
+    // Create the binary tree
+    struct Node* root = newNode(1);
+    root->left = newNode(2);
+    root->right = newNode(3);
+    root->left->left = newNode(4);
+    root->left->right = newNode(5);
+    root->right->right = newNode(6);
+
+    printf("Level Order traversal of binary tree is: ");
+    levelOrder(root);
+    return 0;
+}

@@ -1,0 +1,114 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+struct Node {
+    int data;
+    struct Node *left;
+    struct Node *right;
+};
+
+// Function to create a new Node
+struct Node* newNode(int data) {
+    struct Node* node = (struct Node*)malloc(sizeof(struct Node));
+    node->data = data;
+    node->left = NULL;
+    node->right = NULL;
+    return node;
+}
+
+int isLeaf(struct Node *node) {
+    return (node && !node->left && !node->right);
+}
+
+void addLeftBoundary(struct Node *root, int *res, int *index) {
+    if (!root || isLeaf(root))
+        return;
+    
+    res[(*index)++] = root->data;
+
+    if (root->left)
+        addLeftBoundary(root->left, res, index);
+    else if (root->right)
+        addLeftBoundary(root->right, res, index);
+}
+
+void addRightBoundary(struct Node *root, int *res, int *index) {
+    if (!root || isLeaf(root))
+        return;
+
+    if (root->right)
+        addRightBoundary(root->right, res, index);
+    else if (root->left)
+        addRightBoundary(root->left, res, index);
+    
+    res[(*index)++] = root->data;
+}
+
+void addLeaves(struct Node *root, int *res, int *index) {
+    if (!root)
+        return;
+
+    if (isLeaf(root)) {
+        res[(*index)++] = root->data;
+        return;
+    }
+
+    addLeaves(root->left, res, index);
+    addLeaves(root->right, res, index);
+}
+
+int* printBoundary(struct Node *root, int *returnSize) {
+    if (!root) {
+        *returnSize = 0;
+        return NULL;
+    }
+
+    int *res = (int*)malloc(1000 * sizeof(int)); // Assuming a maximum of 1000 nodes
+    int index = 0;
+
+    if (!isLeaf(root))
+        res[index++] = root->data;
+
+    addLeftBoundary(root->left, res, &index);
+    addLeaves(root, res, &index);
+    addRightBoundary(root->right, res, &index);
+
+    *returnSize = index;
+    return res;
+}
+
+int main() {
+    struct Node* root = newNode(1);
+    root->left = newNode(2);
+    root->right = newNode(3);
+    root->left->left = newNode(4);
+    root->left->right = newNode(5);
+    root->right->left = newNode(6);
+    root->right->right = newNode(7);
+    root->left->right->left = newNode(8);
+    root->left->right->right = newNode(9);
+    root->right->right->left = newNode(10);
+
+    int size;
+    int* result = printBoundary(root, &size);
+
+    printf("Boundary Traversal of the Binary Tree: ");
+    for (int i = 0; i < size; i++) {
+        printf("%d ", result[i]);
+    }
+    printf("\n");
+
+    // Free dynamically allocated memory
+    // free(result);
+    // free(root->right->right->left);
+    // free(root->left->right->right);
+    // free(root->left->right->left);
+    // free(root->right->right);
+    // free(root->left->right);
+    // free(root->left->left);
+    // free(root->right);
+    // free(root->left);
+    // free(root);
+
+    return 0;
+}

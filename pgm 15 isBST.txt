@@ -1,0 +1,49 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <stdbool.h>
+#include <limits.h>
+
+struct Node {
+    int data;
+    struct Node* left;
+    struct Node* right;
+};
+
+
+struct Node* createNode(int data) {
+    struct Node* newNode = (struct Node*)malloc(sizeof(struct Node));
+    newNode->data = data;
+    newNode->left = newNode->right = NULL;
+    return newNode;
+}
+
+// Function to check if a tree is a BST
+bool isBST(struct Node* root, int min, int max) {
+    if (root == NULL) {
+        return true; // An empty tree is a BST
+    }
+    if (root->data < min || root->data > max) {
+        return false; // Node value is outside the valid range
+    }
+    // Check left and right subtrees recursively
+    return isBST(root->left, min, root->data - 1) && isBST(root->right, root->data + 1, max);
+}
+
+int main() {
+    // Create a sample binary tree
+    struct Node* root = createNode(4);
+    root->left = createNode(2);
+    root->right = createNode(6);
+    root->left->left = createNode(1);
+    root->left->right = createNode(3);
+    root->right->left = createNode(5);
+    root->right->right = createNode(7);
+
+    // Check if the tree is a BST
+    if (isBST(root, INT_MIN, INT_MAX)) {
+        printf("The given tree is a BST.\n");
+    } else {
+        printf("The given tree is not a BST.\n");
+    }
+    return 0;
+}
