@@ -1,0 +1,17 @@
+def distinct_substrings(string):
+    n = len(string)
+    # Set to store distinct substrings
+    substrings = set()
+    
+    # Iterate over all possible substrings
+    for i in range(n):
+        for j in range(i+1, n+1):
+            # Hash the substring to check for distinctness
+            substrings.add(hash(string[i:j]))
+    
+    return len(substrings)
+
+# Test the function
+input_string = input("Enter a string: ")
+result = distinct_substrings(input_string)
+print("Number of distinct substrings:", result)

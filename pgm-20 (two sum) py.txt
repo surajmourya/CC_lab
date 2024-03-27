@@ -1,0 +1,89 @@
+def twoSum(nums, target):
+    mpp = {}
+    for i in range(len(nums)):
+        num = nums[i]
+        if target - num in mpp:
+            return [mpp[target - num], i]
+        mpp[num] = i
+    return [-1, -1]
+
+nums = [2, 6, 5, 8, 11, 15]
+target = 14
+result = twoSum(nums, target)
+print(result)
+------------------------------------------------------------------------------------------------------------------------------------
+
+
+
+#include <stdio.h>
+#include <stdlib.h>
+
+#define CAPACITY 10
+
+typedef struct {
+    int key;
+    int value;
+} Ht_item;
+
+typedef struct {
+    Ht_item* items[CAPACITY];
+} HashTable;
+
+int hash_function(int key) {
+    return key % CAPACITY;
+}
+
+Ht_item* create_item(int key, int value) {
+    Ht_item* item = (Ht_item*)malloc(sizeof(Ht_item));
+    item->key = key;
+    item->value = value;
+    return item;
+}
+
+HashTable* create_table() {
+    HashTable* table = (HashTable*)malloc(sizeof(HashTable));
+    for (int i = 0; i < CAPACITY; i++) {
+        table->items[i] = NULL;
+    }
+    return table;
+}
+
+Ht_item* search_table(HashTable* table, int key) {
+    int index = hash_function(key);
+    return table->items[index];
+}
+
+void insert_table(HashTable* table, int key, int value) {
+    int index = hash_function(key);
+    table->items[index] = create_item(key, value);
+}
+
+int* twoSum(int* nums, int numsSize, int target, int* returnSize) {
+    HashTable* table = create_table();
+    int* result = (int*)malloc(2 * sizeof(int));
+    for (int i = 0; i < numsSize; i++) {
+        int complement = target - nums[i];
+        Ht_item* item = search_table(table, complement);
+        if (item) {
+            result[0] = item->value;
+            result[1] = i;
+            *returnSize = 2;
+            return result;
+        }
+        insert_table(table, nums[i], i);
+    }
+    *returnSize = 0;
+    return NULL;
+}
+
+int main() {
+    int nums[] = {2, 6, 5, 8, 11};
+    int target = 14;
+    int returnSize;
+    int* result = twoSum(nums, sizeof(nums) / sizeof(nums[0]), target, &returnSize);
+    if (result != NULL) {
+        printf("[%d, %d]\n", result[0], result[1]);
+        free(result);
+    }
+    return 0;
+}
